@@ -1,0 +1,87 @@
+body {
+  margin-inline: 16px;
+}
+
+aside,
+footer,
+main {
+  padding: 8px;
+}
+
+aside {
+  height: fit-content;
+}
+
+main {
+  width: 80%;
+}
+
+nav ul {
+  margin: 0;
+  padding: 20px 8px 20px 40px;
+}
+
+blockquote {
+  margin: 8px 12px 30px;
+}
+
+h1,
+h2 {
+  margin: 0;
+  padding: 4px;
+}
+
+aside :where(h1, h2) {
+  padding: 0;
+}
+
+.azure {
+  background-color: #eeffff;
+  border: 1px solid black;
+  box-shadow: 0px 0px 8px grey;
+}
+
+.grid {
+  margin: 16px 0 12px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.flex-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-right: 12px;
+}
+
+.flex-box > * {
+  width: fit-content;
+}
+
+.color-changing-text {
+  animation: color-change 5s linear infinite alternate;
+}
+
+@keyframes color-change {
+  0% {
+    color: black;
+  }
+  100% {
+    color: darkgoldenrod;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .grid {
+    grid-template-columns: 100%;
+  }
+
+  .flex-box {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .flex-box > * {
+    width: auto;
+  }
+}
