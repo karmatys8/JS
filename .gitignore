@@ -1,0 +1,13 @@
+
+logs
+*.log
+
+build/Release
+
+node_modules
+
+.sass-cache/
+*.css.map
+
+.settings/
+.vscode/
