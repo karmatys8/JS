@@ -3,16 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <title>Plik 'zadanie1C.html'</title>
-    <script type="text/javascript" src="./zadanie1.js"></script>
   </head>
-  <script>
-    /*for (let i = 0; i < 4; i++) {
-      const returned = window.prompt("Wpisz wartosc");
-      console.log(`${returned}:${typeof returned}`)
-    }*/
-  </script>
   <body>
-    <form oninput="wynik.value = parseInt(pole_tekstowe.value) + parseInt(pole_liczbowe.value)">
+    <form
+      oninput="wynik.value = parseInt(pole_tekstowe.value) + parseInt(pole_liczbowe.value)"
+    >
       <input id="pole_tekstowe" type="text" placeholder="Wprowadź tekst" />
       +
       <input id="pole_liczbowe" type="number" placeholder="Wprowadź liczbę" />
@@ -24,4 +19,11 @@
       <input type="button" value="Wypisz" onClick="funkcja_zwrotna_C()" />
     </form>
   </body>
+  <script type="text/javascript" src="./zadanie1.js"></script>
+  <script>
+    /*for (let i = 0; i < 4; i++) {
+      const returned = window.prompt("Wpisz wartosc");
+      console.log(`${returned}:${typeof returned}`)
+    }*/
+  </script>
 </html>

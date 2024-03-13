@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Płótno</title>
+  </head>
+  <body>
+    <main>
+      <h1>Płótno</h1>
+      <canvas id="canvas" style="border: 1px solid #000000">
+        Wygląda na to, że twoja przeglądarka nie obsługuje elementu "canvas" </canvas
+      ><canvas
+        id="logoCanvas"
+        width="180"
+        height="150"
+        style="border: 1px solid #000000"
+      ></canvas>
+    </main>
+    <script>
+      "use strict"; // Nie wyłączaj trybu ścisłego
+      var canvas_ = document.getElementById("canvas"); // Tutaj jest użyty standard W3C DOM — będzie on tematem następnych ćwiczeń
+      const ctx_ = canvas.getContext("2d"); // Utworzenie obiektu 'CanvasRenderingContext2D'
+      ctx_.fillText("Hello World", 10, canvas_.height / 2); // Wykreślenie podanego tekstu na płótnie
+    </script>
+    <script src="./lab1-zad-dod-copy/favicon.js"></script>
+  </body>
+</html>
