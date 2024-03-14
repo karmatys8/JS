@@ -76,6 +76,14 @@
     </nav>
 
     <div class="container">
+      <form class="mt-5" id="exampleCommandForm">
+        <div class="mb-3">
+          <label for="exampleCommandInput" class="form-label">Komenda</label>
+          <input class="form-control" id="exampleCommandInput" />
+        </div>
+        <button type="submit" class="btn btn-primary">Wykonaj</button>
+      </form>
+
       <div class="d-flex flex-row flex-wrap justify-content-center gap-4">
         <div class="headers-container">
           <h1>Akademia Górniczo-Hutnicza</h1>
@@ -127,18 +135,6 @@
           </div>
         </div>
       </div>
-
-      <form class="mt-5" onsubmit="executeCommend(event)">
-        <div class="mb-3">
-          <label for="exampleCommendInput" class="form-label">Komenda</label>
-          <input
-            type="password"
-            class="form-control"
-            id="exampleCommendInput"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary">Wykonaj</button>
-      </form>
     </div>
 
     <footer>
@@ -193,5 +189,5 @@
     crossorigin="anonymous"
   ></script>
   <script src="./favicon.js"></script>
-  <script src="./IndexedDB.js" type="module"></script>
+  <script src="./commandExecutor.js" type="module"></script>
 </html>
