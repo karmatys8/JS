@@ -127,6 +127,18 @@
           </div>
         </div>
       </div>
+
+      <form class="mt-5" onsubmit="executeCommend(event)">
+        <div class="mb-3">
+          <label for="exampleCommendInput" class="form-label">Komenda</label>
+          <input
+            type="password"
+            class="form-control"
+            id="exampleCommendInput"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Wykonaj</button>
+      </form>
     </div>
 
     <footer>
@@ -180,5 +192,6 @@
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
     crossorigin="anonymous"
   ></script>
-  <script src="favicon.js"></script>
+  <script src="./favicon.js"></script>
+  <script src="./IndexedDB.js" type="module"></script>
 </html>
