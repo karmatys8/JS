@@ -1,4 +1,4 @@
-let request = indexedDB.open("library", 2);
+let request = indexedDB.open("library", 3);
 
 function setUpDB() {
   let booksStore = db.createObjectStore("books", {
@@ -85,12 +85,16 @@ function setUpData(booksStore, usersStore, loanHistStore) {
   loanHistData.map((data) => loanHistStore.add(data));
 }
 
-request.onsuccess = function (event) {
+request.onupgradeneeded = (event) => {
   db = event.target.result;
   setUpDB();
+};
+
+request.onsuccess = (event) => {
+  db = event.target.result;
   console.log("Connection to IndexedDB established");
 };
 
-request.onerror = function () {
-  console.error("Connection to IndexedDB failed");
+request.onerror = (event) => {
+  console.error("Error opening database:", event.target.error);
 };
