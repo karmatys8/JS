@@ -1,6 +1,6 @@
 import { commandHandlers } from "./commands.js";
 
-let request = indexedDB.open("library", 3);
+let request = indexedDB.open("library", 4);
 
 let db;
 

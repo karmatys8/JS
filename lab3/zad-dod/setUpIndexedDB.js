@@ -1,4 +1,4 @@
-let request = indexedDB.open("library", 4);
+let request = indexedDB.open("library", 5);
 
 function setUpDB() {
   let booksStore = db.createObjectStore("books", {
