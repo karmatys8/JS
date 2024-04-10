@@ -2,23 +2,22 @@ import http from "node:http";
 import { URL } from "node:url";
 import fs from "fs";
 
+/**
+ * Path to the file where posts data is stored.
+ * @type {string}
+ */
 const filepath = "./src/posts.json";
 
 /**
- * Handles incoming requests.
- *
- * @param {IncomingMessage} request - Input stream — contains data received from the browser, e.g,. encoded contents of HTML form fields.
- * @param {ServerResponse} response - Output stream — put in it data that you want to send back to the browser.
- * The answer sent by this stream must consist of two parts: the header and the body.
- * <ul>
- *  <li>The header contains, among others, information about the type (MIME) of data contained in the body.
- *  <li>The body contains the correct data, e.g. a form definition.
- * </ul>
- * @author Stanisław Polak <polak@agh.edu.pl>
+ * Array to store posts data.
+ * @type {Array<Object>}
  */
-
 let postsData = [];
 
+/**
+ * Reads posts data from the file.
+ * @returns {void}
+ */
 function readPosts() {
   fs.readFile(filepath, "utf8", (err, data) => {
     if (err) console.error(err);
@@ -26,34 +25,36 @@ function readPosts() {
   });
 }
 
+/**
+ * Writes posts data to the file.
+ * @returns {void}
+ */
 function writePosts() {
   fs.writeFile(filepath, JSON.stringify(postsData, null, 2), (err) => {
     console.error(err);
   });
 }
 
+/**
+ * Handles incoming HTTP requests.
+ * @param {http.IncomingMessage} request - The request object.
+ * @param {http.ServerResponse} response - The response object.
+ * @returns {void}
+ */
 function requestListener(request, response) {
   console.log("--------------------------------------");
   console.log(`The relative URL of the current request: ${request.url}`);
   console.log(`Access method: ${request.method}`);
   console.log("--------------------------------------");
-  // Create the URL object
-  const url = new URL(request.url, `http://${request.headers.host}`);
-  /* ************************************************** */
-  // if (!request.headers['user-agent'])
-  if (url.pathname !== "/favicon.ico")
-    // View detailed URL information
-    console.log(url);
 
-  /* *************** */
-  /* "Routes" / APIs */
-  /* *************** */
+  const url = new URL(request.url, `http://${request.headers.host}`);
+
+  if (url.pathname !== "/favicon.ico") console.log(url);
 
   switch ([request.method, url.pathname].join(" ")) {
     case "GET /":
       readPosts();
       response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-
       response.write(`
         <!DOCTYPE html>
         <html lang="en">
@@ -96,21 +97,9 @@ function requestListener(request, response) {
       response.end();
       break;
 
-    /* 
-          ------------------------------------------------------
-          Processing the form content, if 
-              the GET method was used to send data to the server
-          and 
-              the relative URL is '/submit', 
-          ------------------------------------------------------
-        */
     case "GET /submit":
-      /* ************************************************** */
-      // Creating an answer header — we inform the browser that the returned data is plain text
       response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
-      /* ************************************************** */
-      // Place given data (here: 'Hello <name>') in the body of the answer
-      response.write(`Hello ${url.searchParams.get("full-name")}`); // "url.searchParams.get('name')" contains the contents of the field (form) named 'name'
+      response.write(`Hello ${url.searchParams.get("full-name")}`);
 
       const newPost = {};
 
@@ -119,16 +108,10 @@ function requestListener(request, response) {
       }
       postsData.push(newPost);
       writePosts();
-      // readPosts();
-      /* ************************************************** */
-      response.end(); // The end of the response — send it to the browser
+
+      response.end();
       break;
 
-    /* 
-          ----------------------
-          If no route is matched 
-          ---------------------- 
-        */
     default:
       response.writeHead(501, { "Content-Type": "text/plain; charset=utf-8" });
       response.write("Error 501: Not implemented");
@@ -136,10 +119,10 @@ function requestListener(request, response) {
   }
 }
 
-/* ************************************************** */
-/* Main block
-/* ************************************************** */
-const server = http.createServer(requestListener); // The 'requestListener' function is defined above
+// Create HTTP server
+const server = http.createServer(requestListener);
+
+// Start listening on port 8001
 server.listen(8001);
 console.log("The server was started on port 8001");
 console.log('To stop the server, press "CTRL + C"');

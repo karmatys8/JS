@@ -6,6 +6,7 @@
 // const { URL } = require('node:url');
 import http from "node:http";
 import { URL } from "node:url";
+import fs from 'fs';
 
 /**
  * Handles incoming requests.
@@ -29,9 +30,10 @@ function requestListener(request, response) {
   const url = new URL(request.url, `http://${request.headers.host}`);
   /* ************************************************** */
   // if (!request.headers['user-agent'])
-  if (url.pathname !== "/favicon.ico")
+  if (url.pathname !== "/favicon.ico") {
     // View detailed URL information
     console.log(url);
+  }
 
   /* *************** */
   /* "Routes" / APIs */
@@ -77,6 +79,18 @@ function requestListener(request, response) {
       response.end(); // The end of the response — send it to the browser
       break;
 
+    case "GET /favicon.ico":
+      fs.readFile('./favicon.ico', (err, data) => {
+        if (err) {
+          response.writeHead(404);
+          response.end();
+        }
+
+        response.writeHead(200, { 'Content-Type': 'image/x-icon' });
+        response.end(data);
+      })
+
+      break
     /* 
           ------------------------------------------------------
           Processing the form content, if 
@@ -95,7 +109,25 @@ function requestListener(request, response) {
       /* ************************************************** */
       response.end(); // The end of the response — send it to the browser
       break;
+    
+    case "POST /":
+      let body = '';
 
+      request.on('data', (chunk) => {
+        body += chunk;
+      });
+    
+      // When all data is received
+      request.on('end', () => {
+        const formData = new URLSearchParams(body);
+    
+        const name = formData.get('name');
+    
+        response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+        response.write(`Hello ${name}`);
+        response.end();
+      });
+      break;
     /* 
           ----------------------
           If no route is matched 
