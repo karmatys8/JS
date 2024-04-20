@@ -1,0 +1,26 @@
+[
+  {
+    "id": 0,
+    "amount": 5,
+    "name": "Programowanie skryptowe",
+    "course": "Cyberbezpieczeństwo",
+    "department": "Wydział IET",
+    "src": "https://static01.helion.com.pl/global/okladki/vbig/pylk5v.jpg"
+  },
+  {
+    "id": 1,
+    "amount": 10,
+    "name": "Geologia ogólna",
+    "course": "Geoinformatyka",
+    "department": "Wydział GGIOŚ",
+    "src": "https://www.wuw.pl/pol_pl_Geologia-regionalna-Polski-3007_1.png"
+  },
+  {
+    "id": 2,
+    "amount": 1,
+    "name": "Grafika komputerowa",
+    "course": "Informatyka społeczna",
+    "department": "Wydział Humanistyczny",
+    "src": "https://s.lubimyczytac.pl/upload/books/275000/275469/448262-352x500.jpg"
+  }
+]

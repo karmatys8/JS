@@ -15,14 +15,14 @@ async function updateBookAmount(bookId, actionName, change) {
         };
 
         updateRequest.onerror = (event) => {
-          window.alert(`Error ${actionName}ing book:`, event.target.error);
+          console.error(`Error ${actionName}ing book:`, event.target.error);
         };
         cursor.continue();
       }
     };
 
     request.onerror = (event) => {
-      window.alert(`Error ${actionName}ing book:`, event.target.error);
+      console.error(`Error ${actionName}ing book:`, event.target.error);
     };
   });
 }
@@ -41,7 +41,7 @@ async function checkEntityExistence(storeName, entityId, entityType) {
       };
 
       request.onerror = () => {
-        window.alert(`Error checking if ${entityType} exists`);
+        console.error(`Error checking if ${entityType} exists`);
       };
     });
   });
@@ -65,7 +65,7 @@ async function lendABook(userId, bookId) {
     };
 
     request.onerror = (event) => {
-      window.alert("Error lending book:", event.target.error);
+      console.error("Error lending book:", event.target.error);
     };
   });
 
@@ -94,7 +94,7 @@ async function returnABook(userId, bookId) {
           };
 
           updateRequest.onerror = (event) => {
-            window.alert("Error returning book:", event.target.error);
+            console.error("Error returning book:", event.target.error);
           };
         }
         cursor.continue();
@@ -102,7 +102,7 @@ async function returnABook(userId, bookId) {
     };
 
     request.onerror = (event) => {
-      window.alert("Error retrieving book:", event.target.error);
+      console.error("Error retrieving book:", event.target.error);
     };
   });
 
@@ -131,7 +131,7 @@ async function showCurrentReaders(bookId) {
     };
 
     request.onerror = (event) => {
-      window.alert("Error listing book's users:", event.target.error);
+      console.error("Error listing book's users:", event.target.error);
     };
   });
 }
@@ -157,7 +157,7 @@ function performTransaction(storeName, mode, action) {
   };
 
   transaction.onerror = (event) => {
-    window.alert("Transaction error:", event.target.error);
+    console.error("Transaction error:", event.target.error);
   };
 }
 
@@ -241,7 +241,7 @@ function CardDataFetcher() {
       };
 
       request.onerror = (event) => {
-        window.alert("Error showing library details:", event.target.error);
+        console.error("Error showing library details:", event.target.error);
       };
     });
   }, [db]);
@@ -268,3 +268,19 @@ function CardDataFetcher() {
     </React.Fragment>
   );
 }
+
+async function loadFromBackend() {
+  try {
+    const response = await fetch("http://localhost:8008/");
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+    } else {
+      console.error(response.error());
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+loadFromBackend();
