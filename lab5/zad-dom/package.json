@@ -24,12 +24,13 @@
   },
   "contributors": [],
   "scripts": {
-    "dev": "",
-    "test": ""
+    "dev": "node --watch src/app2",
+    "test": "npx jest"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "supertest": "^6.3.4"
