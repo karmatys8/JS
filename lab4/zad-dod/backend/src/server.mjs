@@ -6,7 +6,7 @@ import fs from "fs";
  * Path to the file where posts data is stored.
  * @type {string}
  */
-const booksFilepath = "./data/books";
+const booksFilepath = "./data/books.json";
 /**
  * Array to store books data.
  * @type {Array<Object>}
@@ -17,7 +17,7 @@ let booksData = [];
  * Path to the file where posts data is stored.
  * @type {string}
  */
-const usersFilepath = "./data/users";
+const usersFilepath = "./data/users.json";
 /**
  * Array to store users data.
  * @type {Array<Object>}
@@ -28,7 +28,7 @@ let usersData = [];
  * Path to the file where posts data is stored.
  * @type {string}
  */
-const loanHistFilepath = "./data/loanHist";
+const loanHistFilepath = "./data/loanHist.json";
 /**
  * Array to store loan history data.
  * @type {Array<Object>}
@@ -39,10 +39,16 @@ let loanHistData = [];
  * Reads posts data from the file.
  * @returns {void}
  */
-function readData(filepath, dataArray) {
-  fs.readFile(filepath, "utf8", (err, data) => {
-    if (err) console.error(err);
-    dataArray = JSON.parse(data);
+function readData(filepath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filepath, "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+        return;
+      }
+      resolve(JSON.parse(data));
+    });
   });
 }
 
@@ -60,7 +66,7 @@ function writeData(filepath, dataArray) {
  * Safely handle the request callbacks.
  * @returns {void}
  */
-function safeRequestProcessing({
+async function safeRequestProcessing({
   request,
   response,
   body,
@@ -68,7 +74,7 @@ function safeRequestProcessing({
   onEndAction,
 }) {
   try {
-    initialAction;
+    await initialAction();
 
     request.on("data", (chunk) => {
       body.push(chunk);
@@ -102,6 +108,7 @@ function respondWith400(response, responseBody) {
  * @returns {void}
  */
 function respondWith200(response, contentType, responseBody) {
+  // probably it is being to DRY bc responses with plain text are kind of useless, but it is not as if I ever use them
   response.writeHead(200, {
     "Content-Type": contentType,
   });
@@ -121,6 +128,11 @@ function requestListener(request, response) {
   console.log(`Access method: ${request.method}`);
   console.log("--------------------------------------");
 
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Headers", "content-type");
+  response.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
+  response.setHeader("Access-Control-Allow-Credentials", "true");
+
   const url = new URL(request.url, `http://${request.headers.host}`);
 
   if (url.pathname !== "/favicon.ico") console.log(url);
@@ -132,16 +144,18 @@ function requestListener(request, response) {
         request: request,
         response: response,
         body: body,
-        initialAction: () => {
-          readData(booksFilepath, booksData);
-          readData(usersFilepath, usersData);
-          readData(loanHistFilepath, loanHistData);
+        initialAction: async () => {
+          [booksData, usersData, loanHistData] = await Promise.all([
+            readData(booksFilepath),
+            readData(usersFilepath),
+            readData(loanHistFilepath),
+          ]);
         },
         onEndAction: () => {
           respondWith200(
             response,
             "application/json",
-            JSON.stringify(booksData)
+            JSON.stringify(booksData.filter(book => book.amount > 0))
           );
         },
       });
@@ -156,13 +170,14 @@ function requestListener(request, response) {
         onEndAction: () => {
           const requestData = Buffer.concat(body).toString();
 
-          const { bookId, userId } = requestData;
+          const { bookId, userId } = JSON.parse(requestData);
 
           if (!booksData.some((book) => book.id === bookId)) {
             respondWith400(
               response,
               `Book with provided id: ${bookId} does not exist`
             );
+            return;
           }
 
           if (!usersData.some((user) => user.id === userId)) {
@@ -170,6 +185,7 @@ function requestListener(request, response) {
               response,
               `User with provided id: ${userId} does not exist`
             );
+            return;
           }
 
           const currBook = booksData.find((book) => book.id === bookId);
@@ -178,6 +194,7 @@ function requestListener(request, response) {
               response,
               `There are no books with id: ${bookId} left to borrow`
             );
+            return;
           }
 
           currBook.amount--;
@@ -211,13 +228,14 @@ function requestListener(request, response) {
         onEndAction: () => {
           const requestData = Buffer.concat(body).toString();
 
-          const { bookId, userId } = requestData;
+          const { bookId, userId } = JSON.parse(requestData);
 
           if (!booksData.some((book) => book.id === bookId)) {
             respondWith400(
               response,
               `Book with provided id: ${bookId} does not exist`
             );
+            return;
           }
 
           if (!usersData.some((user) => user.id === userId)) {
@@ -225,18 +243,23 @@ function requestListener(request, response) {
               response,
               `User with provided id: ${userId} does not exist`
             );
+            return;
           }
 
           const currBook = booksData.find((book) => book.id === bookId);
           const currHist = loanHistData.find(
-            (hist) => hist.bookId === bookId && hist.userId === userId
+            (hist) =>
+              hist.bookId === bookId &&
+              hist.userId === userId &&
+              !hist.didReturn
           );
 
           if (currHist === undefined) {
             respondWith400(
               response,
-              `There is no history of book with id: ${bookId} being lend to user with id: ${userId}`
+              `There is no unreturned book with id: ${bookId} by a user with id: ${userId}`
             );
+            return;
           }
 
           currBook.amount++;
@@ -260,19 +283,20 @@ function requestListener(request, response) {
         request: request,
         response: response,
         body: body,
-        initialAction: () => {
-          readData(loanHistFilepath, loanHistData);
+        initialAction: async () => {
+          [loanHistData] = await Promise.all([readData(loanHistFilepath)]);
         },
         onEndAction: () => {
           const requestData = Buffer.concat(body).toString();
 
-          const { userId } = requestData;
+          const { userId } = JSON.parse(requestData);
 
           if (!usersData.some((user) => user.id === userId)) {
             respondWith400(
               response,
               `User with provided id: ${userId} does not exist`
             );
+            return;
           }
 
           respondWith200(

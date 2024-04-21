@@ -1,20 +1,17 @@
 [
   {
-    "id": 0,
-    "bookId": 2,
-    "userId": 1,
+    "bookId": 1,
+    "userId": 0,
     "didReturn": true
   },
   {
-    "id": 1,
-    "bookId": 3,
-    "userId": 3,
+    "bookId": 2,
+    "userId": 2,
     "didReturn": false
   },
   {
-    "id": 2,
-    "bookId": 3,
-    "userId": 1,
+    "bookId": 2,
+    "userId": 0,
     "didReturn": true
   }
 ]
