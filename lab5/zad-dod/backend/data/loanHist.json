@@ -1,0 +1,17 @@
+[
+  {
+    "bookId": 1,
+    "userId": 0,
+    "didReturn": true
+  },
+  {
+    "bookId": 2,
+    "userId": 2,
+    "didReturn": false
+  },
+  {
+    "bookId": 2,
+    "userId": 0,
+    "didReturn": true
+  }
+]
