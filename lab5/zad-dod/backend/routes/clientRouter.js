@@ -1,101 +1,15 @@
-import express from "express";
-import { MongoClient } from "mongodb";
-import cors from "cors";
+const express = require("express");
+const { getDb } = require("../db");
+const cors = require("cors");
+const { respondWith200, respondWith400 } = require("../util/responses");
 
-/* *************************** */
-/* Configuring the application */
-/* *************************** */
-const app = express();
-
-app.locals.pretty = app.get("env") === "development"; // The resulting HTML code will be indented in the development environment
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(cors());
-
-let mongoDB;
-const mongoConnect = async (callback) => {
-  try {
-    const client = await MongoClient.connect(
-      "mongodb://127.0.0.1:27017/library"
-    );
-    mongoDB = client.db();
-
-    callback();
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const getDb = () => {
-  if (mongoDB) {
-    return mongoDB;
-  }
-  throw "Not connected to mongo";
-};
-
-// /**
-//  * Safely handle the req callbacks.
-//  * @returns {void}
-//  */
-// async function safeReqProcessing({
-//   req,
-//   resp,
-//   body,
-//   initialAction,
-//   onEndAction,
-// }) {
-//   try {
-//     await initialAction();
-
-//     req.on("data", (chunk) => {
-//       body.push(chunk);
-//     });
-//     req.on("end", onEndAction);
-//   } catch (error) {
-//     resp.writeHead(501, {
-//       "Content-Type": "text/plain; charset=utf-8",
-//     });
-//     resp.write(
-//       `Error 501: ${error.message ?? "Error while processing req"}`
-//     );
-//     resp.end();
-//   }
-// }
-
-/**
- * Send the response when req data is incorrect.
- * @returns {void}
- */
-function respondWith400(res, resBody) {
-  res.writeHead(400, {
-    "Content-Type": "text/plain; charset=utf-8",
-  });
-  res.write(`Error 400: ${resBody}`);
-  res.end();
-}
-
-/**
- * Send the response after successful request and processing.
- * @returns {void}
- */
-function respondWith200(res, contentType, resBody) {
-  res.writeHead(200, {
-    "Content-Type": contentType,
-  });
-  res.write(resBody);
-  res.end();
-}
-
-/* ******** */
-/* "Routes" */
-/* ******** */
+const router = express.Router();
+router.use(cors());
 
 /* ------------- */
 /* Route 'GET /' */
 /* ------------- */
-app.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
   const db = getDb();
 
   res.status(200);
@@ -105,7 +19,7 @@ app.get("/", async (req, res) => {
 /* ------------- */
 /* Route 'POST /borrow' */
 /* ------------- */
-app.post("/borrow", async (req, res) => {
+router.post("/borrow", async (req, res) => {
   const { bookId, userId } = req.body;
 
   const db = getDb();
@@ -133,7 +47,7 @@ app.post("/borrow", async (req, res) => {
 /* ------------- */
 /* Route 'POST /return' */
 /* ------------- */
-app.post("/return", async (req, res) => {
+router.post("/return", async (req, res) => {
   const { bookId, userId } = req.body;
   const db = getDb();
   const books = db.collection("books");
@@ -185,7 +99,7 @@ app.post("/return", async (req, res) => {
 /* ------------- */
 /* Route 'POST /reader' */
 /* ------------- */
-app.post("/reader/:userId", async (req, res) => {
+router.post("/reader/:userId", async (req, res) => {
   let { userId } = req.params;
 
   userId = parseInt(userId);
@@ -204,15 +118,9 @@ app.post("/reader/:userId", async (req, res) => {
 
   const data = await db
     .collection("loanHist")
-    .find({ userId: userId }).toArray();
+    .find({ userId: userId })
+    .toArray();
   respondWith200(res, "application/json", JSON.stringify(data));
 });
 
-/* ************************************************ */
-
-mongoConnect(() => {
-  app.listen(8008, () => {
-    console.log("The server was started on port 8008");
-    console.log('To stop the server, press "CTRL + C"');
-  });
-});
+module.exports = router;
