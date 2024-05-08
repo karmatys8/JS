@@ -28,9 +28,9 @@ html(lang='en')
 
                 // TODO: Here put the code that, depending on the value of the 'http_method' variable — GET / POST — assigns the 'name' variable to the value of the 'name_GET' / 'name_POST' form field
                 if (http_method.toUpperCase() === 'GET') {
-                    name = document.querySelector('#name_GET').value;
+                    name = document.getElementById('name_GET').value;
                 } else if (http_method.toUpperCase() === 'POST') {
-                    name = document.querySelector('#name_POST').value;
+                    name = document.getElementById('name_POST').value;
                 }
 
                 return name;
@@ -61,15 +61,17 @@ html(lang='en')
                         console.log(xhr.response);
                         console.groupEnd();
 
+                        const receivedDataDiv = document.getElementById('received-data');
+
                         if(show_alert) {
                             if (response_type === 'json') {
                                 let parsedResponse = JSON.stringify(xhr.response);
-                                window.alert(parsedResponse);
+                                receivedDataDiv.innerText = parsedResponse;
                             } else if (response_type === 'document') {
                                 let xmlString = new XMLSerializer().serializeToString(xhr.responseXML);
-                                window.alert(xmlString);
+                                receivedDataDiv.innerText = xmlString;
                             } else if (response_type === 'text') {
-                                window.alert(xhr.response);
+                                receivedDataDiv.innerText = xhr.response;
                             }
                         } else {
                             results.set(`ajax ${http_method} ${response_type}`, xhr.response);
@@ -193,13 +195,15 @@ html(lang='en')
                     console.log(result);
                     console.groupEnd();
 
-                    if(show_alert)
+                    const receivedDataDiv = document.getElementById('received-data');
+
+                    if(show_alert  &&  receivedDataDiv !== undefined)
                         if (response_type === 'document') {
-                            result.then(data => window.alert(decodeHtml(data)));
+                            result.then(data => receivedDataDiv.innerText = decodeHtml(data));
                         } else if (response_type === 'json') {
-                            result.then(data => window.alert(JSON.stringify(data)));
+                            result.then(data => receivedDataDiv.innerText = JSON.stringify(data));
                         } else {
-                            result.then(data => window.alert(data));
+                            result.then(data => receivedDataDiv.innerText = data);
                         }
                     else {
                         results.set(`fetch ${http_method} ${response_type}`, result);
@@ -207,7 +211,7 @@ html(lang='en')
                     }
                 })
                 .catch(function (error) { // if the promise is rejected
-                    window.alert(error);
+                    receivedDataDiv.innerText = error;
                 });
             }
         script(src="https://cdn.jsdelivr.net/npm/mocha/mocha.js") 
@@ -255,6 +259,7 @@ html(lang='en')
                         td
                             each type in ["text", "json", "xml"]
                                 button(onclick=`console.clear() ; requestFetchAPI("${method}","${type}", getName('${method}'), true)`) #{type}
+            div#received-data
         h1 Unit tests
         button(onclick='window.location.reload();') Restart
         div(id="mocha")
@@ -281,7 +286,7 @@ html(lang='en')
 
             function decodeHtml(html) {
                 var txt = document.createElement("textarea");
-                txt.innerHTML = html;
+                txt.innerTextreceivedDataDiv.innerText = html;
 
                 return txt.value;
             }
