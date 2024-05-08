@@ -20,6 +20,35 @@ html(lang='en')
                 color: white;
             }
         script.
+            async function handleCityTime(event) {
+                event.preventDefault();
+
+                try {
+                    const response = await getTime(document.getElementById('city').value);
+                    document.getElementById("received-data").innerText = response.datetime;
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            async function getTime(europeCity) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const response = await fetch(`http://worldtimeapi.org/api/timezone/Europe/${europeCity}`);
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            resolve(data);
+                        } else {
+                            const errorData = await response.text();
+                            reject(errorData);
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+
             /**************************************************************************************/
             /* Function that retrieves the content of one of the selected text fields of the form */
             /**************************************************************************************/
@@ -133,10 +162,10 @@ html(lang='en')
             /* response_type ∈ ["text", "json", "xml"]                                            */ 
             /* name - Contents of the form's text box - data that needs to be sent asynchronously */
             /**************************************************************************************/
-            function requestFetchAPI(http_method, response_type, name, show_alert=false) {
+            async function requestFetchAPI(http_method, response_type, name, show_alert = false) {
                 let accept = '*/*';
 
-                switch(response_type){
+                switch (response_type) {
                     case 'json':
                         accept = 'application/json';
                         break;
@@ -144,39 +173,30 @@ html(lang='en')
                         accept = 'application/xml';
                         break;
                 }
-                //--------------------------------------------------------------------------
-                // Configuration and execution of the (asynchronous) query to the web server
-                //--------------------------------------------------------------------------
-                    ((http_method) => {
-                        if(http_method === 'GET')
-                            return fetch(`http://localhost:8000/submit?name=${encodeURIComponent(name)}`, { // TO BE MODIFIED
+
+                try {
+                    const response = await ((http_method) => {
+                        if (http_method === 'GET')
+                            return fetch(`http://localhost:8000/submit?name=${encodeURIComponent(name)}`, {
                                 method: 'GET',
-                                credentials: "include", // Do not modify or remove
+                                credentials: "include",
                                 headers: {
-                                    //****************************************************************************************
-                                    // What is the acceptable data type—the server part should return data of the given type
-                                    //****************************************************************************************
                                     Accept: accept
                                 }
                             });
-                        if(http_method === 'POST')
+                        if (http_method === 'POST')
                             return fetch('http://localhost:8000/submit', {
                                 method: 'POST',
-                                credentials: "include", // Do not modify or remove
-                                // TO BE ADDED - you need to determine the content of the body
+                                credentials: "include",
                                 body: `name=${encodeURIComponent(name)}`,
                                 headers: {
-                                      // TO BE ADDED: you must specify the value of the 'Content-type' header — you must inform the server that the body content contains data of the "application/x-www-form-urlencoded" type
                                     "Content-type": "application/x-www-form-urlencoded",
-                                    //****************************************************************************************
-                                    // What is the acceptable data type—the server part should return data of the given type
-                                    //****************************************************************************************
                                     Accept: accept
                                 }
-                        });
+                            });
 
-                })(http_method) // a promise is returned
-                .then(function (response) { // if the promise is fulfilled
+                    })(http_method);
+
                     if (!response.ok)
                         throw Error(response.statusText);
 
@@ -186,33 +206,31 @@ html(lang='en')
 
                     if (!response.headers.get('content-type')?.includes('application/json')) {
                         // If the received data is plain text or an XML document
-                        result = response.text(); 
-                    }
-                    else {
-                        //If the received data is a JSON document
-                        result = response.json();
+                        result = await response.text();
+                    } else {
+                        // If the received data is a JSON document
+                        result = await response.json();
                     }
                     console.log(result);
                     console.groupEnd();
 
                     const receivedDataDiv = document.getElementById('received-data');
 
-                    if(show_alert  &&  receivedDataDiv !== undefined)
+                    if (show_alert && receivedDataDiv !== undefined) {
                         if (response_type === 'document') {
-                            result.then(data => receivedDataDiv.innerText = decodeHtml(data));
+                            receivedDataDiv.innerText = decodeHtml(result);
                         } else if (response_type === 'json') {
-                            result.then(data => receivedDataDiv.innerText = JSON.stringify(data));
+                            receivedDataDiv.innerText = JSON.stringify(result);
                         } else {
-                            result.then(data => receivedDataDiv.innerText = data);
+                            receivedDataDiv.innerText = result;
                         }
-                    else {
+                    } else {
                         results.set(`fetch ${http_method} ${response_type}`, result);
                         dispatchEvent(received);
                     }
-                })
-                .catch(function (error) { // if the promise is rejected
+                } catch (error) {
                     receivedDataDiv.innerText = error;
-                });
+                }
             }
         script(src="https://cdn.jsdelivr.net/npm/mocha/mocha.js") 
         script(type="module").
@@ -224,6 +242,15 @@ html(lang='en')
             mocha.checkLeaks(); 
         main
             table
+                tr
+                    th getTime
+                    td 
+                        form(onsubmit="handleCityTime(event)")
+                            label(for="city") City
+                            input(type="text" id="city" name="city")
+                            br
+                            button(type="submit") Get Time
+                    th European City only
                 tr
                     th  
                     th GET
