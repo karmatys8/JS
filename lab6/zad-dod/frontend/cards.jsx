@@ -243,19 +243,19 @@ const UserCard = ({
 // this is how generating a select list with radio buttons below would look like
 const BooksList = ({ bookData }) => (
   <React.Fragment>
-    <select class="form-select m-2" aria-label="Default select example">
-      <option selected>Books to choose from</option>
+    <select className="form-select m-2" aria-label="Default select example">
+      <option defaultValue>Books to choose from</option>
       {bookData.map((book) => (
         <option value={book.id} key={book.id}>
           {book.course}
         </option>
       ))}
     </select>
-    <div class="btn-group m-2 gap-1" role="group" aria-label="Basic example">
-      <button type="button" class="btn btn-primary">
+    <div className="btn-group m-2 gap-1" role="group" aria-label="Basic example">
+      <button type="button" className="btn btn-primary">
         Wypożycz
       </button>
-      <button type="button" class="btn btn-primary">
+      <button type="button" className="btn btn-primary">
         Sprzedaj
       </button>
     </div>

@@ -2,7 +2,7 @@ const express = require("express");
 const { getDb } = require("../db");
 const cors = require("cors");
 const { respondWith200, respondWith400 } = require("../util/responses");
-const xml = require('xml');
+const xml = require("xml");
 
 const router = express.Router();
 router.use(
@@ -82,6 +82,11 @@ router.post("/return", async (req, res) => {
   const users = db.collection("users");
   const loanHist = db.collection("loanHist");
 
+  if (typeof bookId !== "number" || typeof userId !== "number") {
+    respondWith400(res, "Incorrect data type");
+    return;
+  }
+
   const usersFound = await users.findOne({ id: userId });
 
   if (!usersFound) {
@@ -117,10 +122,13 @@ router.post("/return", async (req, res) => {
 
   await books.updateOne({ id: bookId }, { $inc: { amount: 1 } });
 
+  const encodedBookId = encodeURIComponent(bookId.toString());
+  const encodedUserId = encodeURIComponent(userId.toString());
+
   respondWith200(
     res,
     "text/plain; charset=utf-8",
-    `Book with id: ${bookId} returned by a user with id: ${userId} successfully`
+    `Book with id: ${encodedBookId} returned by a user with id: ${encodedUserId} successfully`
   );
 });
 
@@ -131,7 +139,7 @@ router.post("/reader/:userId", async (req, res) => {
   let { userId } = req.params;
 
   userId = parseInt(userId);
-  if (userId === NaN) {
+  if (isNaN(userId)) {
     respondWith400(res, `User id has to be a number`);
     return;
   }

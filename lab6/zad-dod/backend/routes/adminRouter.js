@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
 
   if (!Number.isInteger(amount)) {
     amount = parseInt(amount);
-    if (amount === NaN) {
+    if (isNaN(amount)) {
       respondWith400(res, "Amount value has to be numerical");
       return;
     }
