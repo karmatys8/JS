@@ -1,0 +1,22 @@
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*~
+
+# Logs
+logs/
+*.log
+
+# Dependency directories
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Environment variables
+.env
+.env.*.local
