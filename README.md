@@ -20,3 +20,7 @@ Na koniec sumujemy wszystkie pkt i wystawiamy ocenę:
 _\*przy czym np. 90% skutkuje w ocenie 5.0_
 
 [^zad]: można oddać tylko jedno z nich
+
+## Ocena końcowa
+
+34 / 35 pkt
