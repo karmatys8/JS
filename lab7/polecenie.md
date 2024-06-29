@@ -10,4 +10,4 @@ Nie wykonałem zadania z aplikacją ZAP.
 
 ### Polecenie
 
-![](/images/lab7-zad-dom.pdf)
+[Zad dom](/images/lab7-zad-dom.pdf)

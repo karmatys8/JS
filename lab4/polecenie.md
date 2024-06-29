@@ -8,7 +8,7 @@
 
 ### Polecenie
 
-![](/images/lab4-zad-dom.pdf)
+[Zad dom](/images/lab4-zad-dom.pdf)
 
 ## Zadanie dodatkowe
 
@@ -18,4 +18,4 @@
 
 ### Polecenie
 
-![](/images/lab4-zad-dod.pdf)
+[Zad dod](/images/lab4-zad-dod.pdf)

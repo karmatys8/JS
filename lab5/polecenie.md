@@ -8,7 +8,7 @@
 
 ### Polecenie
 
-![](/images/lab5-zad-dom.pdf)
+[Zad dom](/images/lab5-zad-dom.pdf)
 
 ## Zadanie dodatkowe
 
@@ -20,4 +20,4 @@ Nie użyłem uwierzytelnienia HTTP.
 
 ### Polecenie
 
-![](/images/lab5-zad-dod.pdf)
+[Zad dod](/images/lab5-zad-dod.pdf)

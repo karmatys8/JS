@@ -10,7 +10,7 @@ Nie zastosowałem mobile first design.
 
 ### Polecenie
 
-![](/images/lab1-zad-dom.pdf)
+[Zad dom](/images/lab1-zad-dom.pdf)
 
 ## Zadanie dodatkowe
 
@@ -22,4 +22,4 @@ Nie zastosowałem mobile first design.
 
 Należało zrekreować poniższy wygląd strony.
 
-![](/images/lab1-zad-dod.webm)
+[Zad dod](/images/lab1-zad-dod.webm)
